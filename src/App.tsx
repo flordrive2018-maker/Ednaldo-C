@@ -557,15 +557,6 @@ export default function App() {
               <h3 className="text-xl font-bold mb-3">Qualidade Certificada</h3>
               <p className="text-sm text-white/50">Trabalhamos apenas com as melhores marcas do mercado, do básico ao acabamento fino.</p>
             </div>
-
-            {/* Speed Card */}
-            <div className="bento-item scroll-reveal">
-              <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center mb-6">
-                <Clock className="text-amber-400" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">Entrega Expressa</h3>
-              <p className="text-sm text-white/50">Logística otimizada para o Rio de Janeiro. Grátis até 4km, R$20 após. Sua obra não para por falta de material.</p>
-            </div>
           </div>
         </section>
 
