@@ -1,0 +1,7 @@
+{
+  "name": "Andaraí Materiais - Premium Construction",
+  "description": "Landing page de luxo para materiais de construção no Rio de Janeiro, com simulador de entrega e atendimento especializado.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
