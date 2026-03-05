@@ -198,7 +198,7 @@ export default function App() {
                     <Truck className="text-accent" />
                   </div>
                   <h3 className="text-3xl font-bold mb-4">Simulador de Entrega em Tempo Real</h3>
-                  <p className="text-white/60 max-w-md">Insira seu CEP e veja nosso caminhão em movimento. Saiba exatamente o custo do frete e o tempo de chegada sem precisar de login.</p>
+                  <p className="text-white/60 max-w-md">Insira seu CEP e veja nosso caminhão em movimento. <strong>Entregas gratuitas em até 4km</strong>. A partir disso, taxa fixa de apenas R$20.</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <input 
@@ -237,7 +237,7 @@ export default function App() {
                 <Clock className="text-amber-400" />
               </div>
               <h3 className="text-xl font-bold mb-3">Entrega Expressa</h3>
-              <p className="text-sm text-white/50">Logística otimizada para o Rio de Janeiro. Sua obra não para por falta de material.</p>
+              <p className="text-sm text-white/50">Logística otimizada para o Rio de Janeiro. Grátis até 4km, R$20 após. Sua obra não para por falta de material.</p>
             </div>
           </div>
         </section>
