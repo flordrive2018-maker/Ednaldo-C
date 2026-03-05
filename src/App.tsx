@@ -136,8 +136,8 @@ function Calendar({ compact = false }: { compact?: boolean }) {
       </div>
 
       <div className="grid grid-cols-7 gap-1 mb-2">
-        {["D", "S", "T", "Q", "Q", "S", "S"].map(d => (
-          <div key={d} className="text-center text-[9px] uppercase tracking-widest font-bold text-white/30 py-1">{d}</div>
+        {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
+          <div key={`${d}-${i}`} className="text-center text-[9px] uppercase tracking-widest font-bold text-white/30 py-1">{d}</div>
         ))}
         {days}
       </div>
@@ -337,9 +337,17 @@ export default function App() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
             {/* Big Card - Simulator */}
             <div className="bento-item md:col-span-2 md:row-span-2 group scroll-reveal">
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                <Truck size={200} />
+              {/* Background Image with Overlay */}
+              <div className="absolute inset-0 z-0">
+                <img 
+                  src="https://lh3.googleusercontent.com/d/1AfeHCfduj1TWamt094Bjn2JoARAbbrYo" 
+                  alt="Background" 
+                  className="w-full h-full object-cover opacity-20 group-hover:scale-110 transition-transform duration-700"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-br from-dark-bg via-dark-bg/60 to-transparent"></div>
               </div>
+
               <div className="relative z-10 h-full flex flex-col justify-between">
                 <div>
                   <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-6">
