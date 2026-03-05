@@ -493,8 +493,8 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
-            {/* Big Card - Simulator */}
-            <div className="bento-item md:col-span-2 md:row-span-2 group scroll-reveal">
+            {/* Small Card - Simulator (Reduced 50%) */}
+            <div className="bento-item md:row-span-2 group scroll-reveal">
               {/* Background Image with Overlay */}
               <div className="absolute inset-0 z-0">
                 <img 
