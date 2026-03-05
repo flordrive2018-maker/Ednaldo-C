@@ -52,7 +52,7 @@ const holidays2026: Record<string, string> = {
 };
 
 function Calendar({ compact = false }: { compact?: boolean }) {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 1));
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const monthNames = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -83,8 +83,10 @@ function Calendar({ compact = false }: { compact?: boolean }) {
   for (let d = 1; d <= totalDays; d++) {
     const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
     const holiday = holidays2026[dateStr];
-    const isSunday = new Date(year, month, d).getDay() === 0;
+    const dayOfWeek = new Date(year, month, d).getDay();
+    const isSunday = dayOfWeek === 0;
     const isClosed = isSunday || !!holiday;
+    const isWeekdayHoliday = !!holiday && dayOfWeek >= 1 && dayOfWeek <= 5;
 
     days.push(
       <div 
@@ -101,7 +103,7 @@ function Calendar({ compact = false }: { compact?: boolean }) {
         )}
         {holiday && (
           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white text-black text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
-            {holiday}
+            {holiday}{isWeekdayHoliday ? " (Urgência: 221969645513)" : ""}
           </div>
         )}
       </div>
@@ -158,7 +160,16 @@ function Calendar({ compact = false }: { compact?: boolean }) {
       )}
       
       {compact && (
-        <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+        <div className="mt-auto pt-4 border-t border-white/5 flex flex-col gap-2">
+          <a 
+            href="https://wa.me/221969645513" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-[10px] text-accent hover:underline flex items-center gap-1 font-bold"
+          >
+            <Phone size={10} />
+            Em caso de urgência entre em contato com: 221969645513
+          </a>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-red-500"></div>
             <span className="text-[9px] text-white/40 uppercase font-bold tracking-tighter">Feriados/Domingos Fechado</span>
@@ -530,9 +541,20 @@ export default function App() {
             <span className="font-display font-bold tracking-tighter">ANDARAÍ MATERIAIS</span>
           </div>
           
-          <p className="text-white/30 text-sm">
-            © 2026 Andaraí Materiais de Construção. Todos os direitos reservados.
-          </p>
+          <div className="flex flex-col items-center gap-2">
+            <a 
+              href="https://wa.me/221969645513" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-accent hover:underline flex items-center gap-2 font-bold text-sm"
+            >
+              <Phone size={14} />
+              Em caso de urgência entre em contato com: 221969645513
+            </a>
+            <p className="text-white/30 text-sm">
+              © 2026 Andaraí Materiais de Construção. Todos os direitos reservados.
+            </p>
+          </div>
           
           <div className="flex gap-6 text-white/40 text-sm">
             <a href="#" className="hover:text-white transition-colors">Privacidade</a>
