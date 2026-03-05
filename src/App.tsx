@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
   Truck, 
   MessageSquare, 
@@ -17,7 +17,10 @@ import {
   CheckCircle2,
   HardHat,
   Hammer,
-  PaintBucket
+  PaintBucket,
+  ChevronLeft,
+  ChevronRight,
+  Calendar as CalendarIcon
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'motion/react';
 import gsap from 'gsap';
@@ -31,6 +34,125 @@ function cn(...inputs: ClassValue[]) {
 }
 
 gsap.registerPlugin(ScrollTrigger);
+
+const holidays2026: Record<string, string> = {
+  "2026-01-01": "Confraternização Universal",
+  "2026-02-16": "Carnaval",
+  "2026-02-17": "Carnaval",
+  "2026-04-03": "Sexta-feira Santa",
+  "2026-04-21": "Tiradentes",
+  "2026-05-01": "Dia do Trabalho",
+  "2026-06-04": "Corpus Christi",
+  "2026-09-07": "Independência do Brasil",
+  "2026-10-12": "Nossa Senhora Aparecida",
+  "2026-11-02": "Finados",
+  "2026-11-15": "Proclamação da República",
+  "2026-11-20": "Consciência Negra",
+  "2026-12-25": "Natal",
+};
+
+function Calendar() {
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 1));
+
+  const monthNames = [
+    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  ];
+
+  const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
+  const firstDayOfMonth = (year: number, month: number) => new Date(year, month, 1).getDay();
+
+  const prevMonth = () => {
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
+  };
+
+  const nextMonth = () => {
+    setCurrentDate(prev => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
+  };
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const totalDays = daysInMonth(year, month);
+  const startDay = firstDayOfMonth(year, month);
+
+  const days = [];
+  for (let i = 0; i < startDay; i++) {
+    days.push(<div key={`empty-${i}`} className="h-12 md:h-16"></div>);
+  }
+
+  for (let d = 1; d <= totalDays; d++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    const holiday = holidays2026[dateStr];
+    const isSunday = new Date(year, month, d).getDay() === 0;
+    const isClosed = isSunday || !!holiday;
+
+    days.push(
+      <div 
+        key={d} 
+        className={cn(
+          "h-12 md:h-16 flex flex-col items-center justify-center rounded-xl border border-white/5 transition-all relative group",
+          isClosed ? "bg-red-500/10 border-red-500/20" : "bg-white/5 hover:bg-white/10"
+        )}
+      >
+        <span className={cn("text-sm font-bold", isClosed ? "text-red-400" : "text-white")}>{d}</span>
+        {holiday && (
+          <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-red-500 rounded-full"></div>
+        )}
+        {holiday && (
+          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white text-black text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
+            {holiday}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="glass p-6 md:p-10 rounded-[2.5rem] max-w-4xl mx-auto">
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-accent/20 rounded-2xl flex items-center justify-center">
+            <CalendarIcon className="text-accent" />
+          </div>
+          <div>
+            <h3 className="text-2xl font-bold">{monthNames[month]}</h3>
+            <p className="text-white/40 text-sm">{year}</p>
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <button onClick={prevMonth} className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
+            <ChevronLeft size={20} />
+          </button>
+          <button onClick={nextMonth} className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
+            <ChevronRight size={20} />
+          </button>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-7 gap-2 mb-4">
+        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(d => (
+          <div key={d} className="text-center text-[10px] uppercase tracking-widest font-bold text-white/30 py-2">{d}</div>
+        ))}
+        {days}
+      </div>
+
+      <div className="flex flex-wrap gap-6 mt-8 pt-8 border-t border-white/5">
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-white/10 border border-white/20"></div>
+          <span className="text-xs text-white/50">Aberto (08:00 - 18:30)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/40"></div>
+          <span className="text-xs text-white/50">Fechado (Domingos e Feriados)</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-3 h-3 rounded-full bg-red-500"></div>
+          <span className="text-xs text-white/50">Feriado Nacional</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const heroRef = useRef<HTMLDivElement>(null);
@@ -336,6 +458,20 @@ export default function App() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CALENDAR SECTION */}
+        <section className="py-32 px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-20 scroll-reveal">
+              <span className="text-accent font-bold tracking-widest uppercase text-sm mb-4 block">Disponibilidade</span>
+              <h2 className="text-4xl md:text-6xl font-bold mb-6">QUANDO <span className="text-accent italic">FUNCIONAMOS</span>?</h2>
+              <p className="text-white/50 max-w-xl mx-auto">Verifique nossos horários de funcionamento e feriados para planejar sua obra com tranquilidade.</p>
+            </div>
+            <div className="scroll-reveal">
+              <Calendar />
             </div>
           </div>
         </section>
