@@ -20,6 +20,8 @@ import {
   PaintBucket,
   ChevronLeft,
   ChevronRight,
+  Loader2,
+  AlertCircle,
   Calendar as CalendarIcon
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'motion/react';
@@ -50,6 +52,162 @@ const holidays2026: Record<string, string> = {
   "2026-11-20": "Consciência Negra",
   "2026-12-25": "Natal",
 };
+
+function ShippingSimulator() {
+  const [cep, setCep] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{
+    distance: number;
+    cost: number;
+    address: string;
+  } | null>(null);
+  const [error, setError] = useState("");
+
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const handleSimulate = async () => {
+    const cleanCep = cep.replace(/\D/g, "");
+    if (cleanCep.length !== 8) {
+      setError("Por favor, insira um CEP válido com 8 dígitos.");
+      return;
+    }
+    setLoading(true);
+    setError("");
+    setResult(null);
+
+    try {
+      const viaCepRes = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+      const viaCepData = await viaCepRes.json();
+
+      if (viaCepData.erro) {
+        throw new Error("CEP não encontrado. Verifique os números.");
+      }
+
+      const address = `${viaCepData.logradouro}, ${viaCepData.bairro}, ${viaCepData.localidade}, ${viaCepData.uf}`;
+      
+      const nominatimRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&postalcode=${cleanCep}&country=brazil&limit=1`, {
+        headers: {
+          'Accept-Language': 'pt-BR'
+        }
+      });
+      let nominatimData = await nominatimRes.json();
+
+      if (!nominatimData || nominatimData.length === 0) {
+        const nominatimAddrRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`, {
+          headers: {
+            'Accept-Language': 'pt-BR'
+          }
+        });
+        nominatimData = await nominatimAddrRes.json();
+      }
+
+      if (!nominatimData || nominatimData.length === 0) {
+        throw new Error("Localização não encontrada. Tente um CEP próximo.");
+      }
+
+      const destLat = parseFloat(nominatimData[0].lat);
+      const destLon = parseFloat(nominatimData[0].lon);
+
+      const originLat = -22.925828; // Rua Leopoldo, 106
+      const originLon = -43.245554;
+
+      const distance = calculateDistance(originLat, originLon, destLat, destLon);
+      const cost = distance <= 4 ? 0 : 20;
+
+      setResult({
+        distance,
+        cost,
+        address: `${viaCepData.logradouro}, ${viaCepData.bairro}`
+      });
+    } catch (err: any) {
+      setError(err.message || "Erro ao conectar com o serviço de mapas.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="relative z-10 h-full flex flex-col">
+      <div className="mb-6">
+        <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-6">
+          <Truck className="text-accent" />
+        </div>
+        <h3 className="text-3xl font-bold mb-4">Simulador de Entrega em Tempo Real</h3>
+        <p className="text-white/60 max-w-md">
+          Entregas gratuitas em até 4km. A partir disso, taxa fixa de apenas R$20.
+        </p>
+      </div>
+
+      <div className="flex-1 flex flex-col justify-center items-center">
+        {result && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={cn(
+              "p-6 rounded-2xl border flex flex-col items-center text-center gap-4 w-full max-w-sm",
+              result.cost === 0 ? "bg-emerald-500/10 border-emerald-500/20" : "bg-blue-500/10 border-blue-500/20"
+            )}
+          >
+            <div className={cn(
+              "w-12 h-12 rounded-full flex items-center justify-center",
+              result.cost === 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-blue-500/20 text-blue-400"
+            )}>
+              {result.cost === 0 ? <CheckCircle2 size={24} /> : <MapPin size={24} />}
+            </div>
+            <div>
+              <p className="text-2xl font-bold text-white mb-1">
+                {result.cost === 0 ? "Frete Grátis!" : `Frete: R$ ${result.cost.toFixed(2)}`}
+              </p>
+              <p className="text-xs text-white/50 uppercase tracking-widest font-medium">
+                Distância: {result.distance.toFixed(1)}km • {result.address}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 flex flex-col items-center text-center gap-4 w-full max-w-sm"
+          >
+            <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center">
+              <AlertCircle size={24} />
+            </div>
+            <p className="text-sm text-red-400 font-medium">{error}</p>
+          </motion.div>
+        )}
+      </div>
+
+      <div className="mt-6 flex items-center gap-4">
+        <input 
+          type="text" 
+          value={cep}
+          onChange={(e) => setCep(e.target.value)}
+          placeholder="Seu CEP (00000-000)" 
+          className="bg-white/5 border border-white/10 rounded-xl px-6 py-4 flex-1 focus:outline-none focus:border-accent/50 transition-colors text-white"
+        />
+        <button 
+          onClick={handleSimulate}
+          disabled={loading}
+          className="bg-white text-black px-8 py-4 rounded-xl font-bold hover:bg-accent hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        >
+          {loading ? <Loader2 className="animate-spin" size={20} /> : "Simular"}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function Calendar({ compact = false }: { compact?: boolean }) {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -348,25 +506,7 @@ export default function App() {
                 <div className="absolute inset-0 bg-gradient-to-br from-dark-bg via-dark-bg/60 to-transparent"></div>
               </div>
 
-              <div className="relative z-10 h-full flex flex-col justify-between">
-                <div>
-                  <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-6">
-                    <Truck className="text-accent" />
-                  </div>
-                  <h3 className="text-3xl font-bold mb-4">Simulador de Entrega em Tempo Real</h3>
-                  <p className="text-white/60 max-w-md">Insira seu CEP e veja nosso caminhão em movimento. <strong>Entregas gratuitas em até 4km</strong>. A partir disso, taxa fixa de apenas R$20.</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <input 
-                    type="text" 
-                    placeholder="Seu CEP (00000-000)" 
-                    className="bg-white/5 border border-white/10 rounded-xl px-6 py-4 flex-1 focus:outline-none focus:border-accent/50 transition-colors"
-                  />
-                  <button className="bg-white text-black px-8 py-4 rounded-xl font-bold hover:bg-accent hover:text-white transition-all">
-                    Simular
-                  </button>
-                </div>
-              </div>
+              <ShippingSimulator />
             </div>
 
             {/* Calendar Card - Compact next to simulator */}
