@@ -51,7 +51,7 @@ const holidays2026: Record<string, string> = {
   "2026-12-25": "Natal",
 };
 
-function Calendar() {
+function Calendar({ compact = false }: { compact?: boolean }) {
   const [currentDate, setCurrentDate] = useState(new Date(2026, 0, 1));
 
   const monthNames = [
@@ -77,7 +77,7 @@ function Calendar() {
 
   const days = [];
   for (let i = 0; i < startDay; i++) {
-    days.push(<div key={`empty-${i}`} className="h-12 md:h-16"></div>);
+    days.push(<div key={`empty-${i}`} className={cn(compact ? "h-8" : "h-12 md:h-16")}></div>);
   }
 
   for (let d = 1; d <= totalDays; d++) {
@@ -90,11 +90,12 @@ function Calendar() {
       <div 
         key={d} 
         className={cn(
-          "h-12 md:h-16 flex flex-col items-center justify-center rounded-xl border border-white/5 transition-all relative group",
+          "flex flex-col items-center justify-center rounded-lg border border-white/5 transition-all relative group",
+          compact ? "h-8 text-[10px]" : "h-12 md:h-16 text-sm",
           isClosed ? "bg-red-500/10 border-red-500/20" : "bg-white/5 hover:bg-white/10"
         )}
       >
-        <span className={cn("text-sm font-bold", isClosed ? "text-red-400" : "text-white")}>{d}</span>
+        <span className={cn("font-bold", isClosed ? "text-red-400" : "text-white")}>{d}</span>
         {holiday && (
           <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-red-500 rounded-full"></div>
         )}
@@ -108,48 +109,62 @@ function Calendar() {
   }
 
   return (
-    <div className="glass p-6 md:p-10 rounded-[2.5rem] max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-accent/20 rounded-2xl flex items-center justify-center">
-            <CalendarIcon className="text-accent" />
+    <div className={cn(
+      "glass rounded-[2.5rem] flex flex-col h-full",
+      compact ? "p-5" : "p-6 md:p-10 max-w-4xl mx-auto"
+    )}>
+      <div className={cn("flex items-center justify-between", compact ? "mb-4" : "mb-8")}>
+        <div className="flex items-center gap-3">
+          <div className={cn("bg-accent/20 rounded-xl flex items-center justify-center", compact ? "w-10 h-10" : "w-12 h-12")}>
+            <CalendarIcon className="text-accent" size={compact ? 18 : 24} />
           </div>
           <div>
-            <h3 className="text-2xl font-bold">{monthNames[month]}</h3>
-            <p className="text-white/40 text-sm">{year}</p>
+            <h3 className={cn("font-bold", compact ? "text-base" : "text-2xl")}>{monthNames[month]}</h3>
+            <p className="text-white/40 text-[10px]">{year}</p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <button onClick={prevMonth} className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
-            <ChevronLeft size={20} />
+        <div className="flex gap-1">
+          <button onClick={prevMonth} className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
+            <ChevronLeft size={16} />
           </button>
-          <button onClick={nextMonth} className="w-10 h-10 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
-            <ChevronRight size={20} />
+          <button onClick={nextMonth} className="w-8 h-8 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
+            <ChevronRight size={16} />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-2 mb-4">
-        {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(d => (
-          <div key={d} className="text-center text-[10px] uppercase tracking-widest font-bold text-white/30 py-2">{d}</div>
+      <div className="grid grid-cols-7 gap-1 mb-2">
+        {["D", "S", "T", "Q", "Q", "S", "S"].map(d => (
+          <div key={d} className="text-center text-[9px] uppercase tracking-widest font-bold text-white/30 py-1">{d}</div>
         ))}
         {days}
       </div>
 
-      <div className="flex flex-wrap gap-6 mt-8 pt-8 border-t border-white/5">
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-white/10 border border-white/20"></div>
-          <span className="text-xs text-white/50">Aberto (08:00 - 18:30)</span>
+      {!compact && (
+        <div className="flex flex-wrap gap-6 mt-8 pt-8 border-t border-white/5">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-white/10 border border-white/20"></div>
+            <span className="text-xs text-white/50">Aberto (08:00 - 18:30)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/40"></div>
+            <span className="text-xs text-white/50">Fechado (Domingos e Feriados)</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+            <span className="text-xs text-white/50">Feriado Nacional</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/40"></div>
-          <span className="text-xs text-white/50">Fechado (Domingos e Feriados)</span>
+      )}
+      
+      {compact && (
+        <div className="mt-auto pt-4 border-t border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-red-500"></div>
+            <span className="text-[9px] text-white/40 uppercase font-bold tracking-tighter">Feriados/Domingos Fechado</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-red-500"></div>
-          <span className="text-xs text-white/50">Feriado Nacional</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -335,6 +350,11 @@ export default function App() {
               </div>
             </div>
 
+            {/* Calendar Card - Compact next to simulator */}
+            <div className="md:row-span-2 scroll-reveal">
+              <Calendar compact />
+            </div>
+
             {/* AI Chat Card */}
             <div className="bento-item scroll-reveal">
               <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
@@ -354,7 +374,7 @@ export default function App() {
             </div>
 
             {/* Speed Card */}
-            <div className="bento-item md:col-span-1 scroll-reveal">
+            <div className="bento-item scroll-reveal">
               <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center mb-6">
                 <Clock className="text-amber-400" />
               </div>
@@ -462,19 +482,7 @@ export default function App() {
           </div>
         </section>
 
-        {/* CALENDAR SECTION */}
-        <section className="py-32 px-6">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-20 scroll-reveal">
-              <span className="text-accent font-bold tracking-widest uppercase text-sm mb-4 block">Disponibilidade</span>
-              <h2 className="text-4xl md:text-6xl font-bold mb-6">QUANDO <span className="text-accent italic">FUNCIONAMOS</span>?</h2>
-              <p className="text-white/50 max-w-xl mx-auto">Verifique nossos horários de funcionamento e feriados para planejar sua obra com tranquilidade.</p>
-            </div>
-            <div className="scroll-reveal">
-              <Calendar />
-            </div>
-          </div>
-        </section>
+
 
         {/* CTA SECTION */}
         <section id="contato" className="py-32 px-6">
