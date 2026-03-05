@@ -509,6 +509,32 @@ export default function App() {
               <ShippingSimulator />
             </div>
 
+            {/* Express Delivery Card - New */}
+            <div className="bento-item scroll-reveal group overflow-hidden">
+              <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500">
+                <img 
+                  src="https://picsum.photos/seed/fast/800/600" 
+                  alt="Fast Delivery" 
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              <div className="relative z-10">
+                <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center mb-6">
+                  <Clock className="text-accent" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">Entrega Expressa</h3>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-display font-black text-accent">24-72</span>
+                  <span className="text-xl font-bold text-white/50">horas</span>
+                </div>
+                <p className="text-[10px] text-white/30 mt-6 flex items-center gap-2">
+                  <AlertCircle size={12} />
+                  * Salvo em caso de esgotamento do estoque.
+                </p>
+              </div>
+            </div>
+
             {/* Calendar Card - Compact next to simulator */}
             <div className="md:row-span-2 scroll-reveal">
               <Calendar compact />
