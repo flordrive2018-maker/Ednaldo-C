@@ -550,12 +550,15 @@ export default function App() {
             </div>
 
             {/* Quality Card */}
-            <div className="bento-item scroll-reveal">
-              <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
-                <ShieldCheck className="text-emerald-400" />
+            <div className="bento-item scroll-reveal group overflow-hidden bg-emerald-500/5 border border-emerald-500/10">
+              <div className="relative z-10">
+                <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
+                  <ShieldCheck className="text-emerald-400" />
+                </div>
+                <span className="text-accent font-bold text-[10px] uppercase tracking-widest mb-2 block">Referência:</span>
+                <h3 className="text-xl font-bold mb-3">Qualidade Certificada</h3>
+                <p className="text-sm text-white/50">Trabalhamos apenas com as melhores marcas, sendo a escolha número 1 das grandes obras do Andaraí.</p>
               </div>
-              <h3 className="text-xl font-bold mb-3">Qualidade Certificada</h3>
-              <p className="text-sm text-white/50">Trabalhamos apenas com as melhores marcas do mercado, do básico ao acabamento fino.</p>
             </div>
           </div>
         </section>
@@ -583,6 +586,35 @@ export default function App() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* MAJOR PROJECTS SECTION */}
+        <section className="py-24 bg-accent/5 border-y border-accent/10">
+          <div className="max-w-4xl mx-auto px-6">
+            <div className="scroll-reveal text-center mb-16">
+              <span className="text-accent font-bold tracking-widest uppercase text-sm mb-4 block">Tradição & Confiança</span>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">REFERÊNCIA NO BAIRRO <span className="text-accent">ANDARAÍ</span></h2>
+              <p className="text-white/70 text-lg max-w-2xl mx-auto leading-relaxed">
+                Nossa história se confunde com o crescimento da nossa região. Ao longo dos anos, tivemos a honra de fornecer materiais para as obras que são o coração do nosso bairro.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {[
+                { label: "Hospital do Andaraí", icon: <ShieldCheck className="text-accent" /> },
+                { label: "Creches Locais", icon: <CheckCircle2 className="text-accent" /> },
+                { label: "Escolas da Região", icon: <CheckCircle2 className="text-accent" /> },
+                { label: "Igrejas Históricas", icon: <CheckCircle2 className="text-accent" /> }
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-4 bg-white/5 p-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-all hover:scale-[1.02] duration-300">
+                  <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center shrink-0">
+                    {item.icon}
+                  </div>
+                  <span className="font-bold text-lg">{item.label}</span>
+                </div>
+              ))}
             </div>
           </div>
         </section>
@@ -671,7 +703,7 @@ export default function App() {
               Estamos na R. Leopoldo, 106 - Andaraí. Venha conferir nossos preços ou peça pelo WhatsApp com entrega recorde.
             </p>
             
-            <div className="flex flex-col md:flex-row items-center justify-center gap-6">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-6 mb-16">
               <a 
                 href="https://wa.me/5521998187716" 
                 target="_blank" 
@@ -690,6 +722,17 @@ export default function App() {
                   <Clock className="w-4 h-4" />
                   Aberto até às 18:30
                 </div>
+              </div>
+            </div>
+
+            <div className="max-w-4xl mx-auto scroll-reveal">
+              <div className="aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative group">
+                <img 
+                  src="https://lh3.googleusercontent.com/d/1F_4lXGVQ4EpPznIHxRQBij37Z9HpVhDx" 
+                  alt="Nossa História no Andaraí" 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  referrerPolicy="no-referrer"
+                />
               </div>
             </div>
           </div>
