@@ -399,7 +399,7 @@ export default function App() {
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
               <HardHat className="text-white w-5 h-5" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tighter">ANDARAÍ</span>
+            <span className="font-display font-bold text-xl tracking-tighter">EDNALDO MATERIAIS DE CONSTRUÇÃO</span>
           </div>
           
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
@@ -446,7 +446,7 @@ export default function App() {
             </h1>
             
             <p className="hero-sub text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
-              Materiais de alta qualidade, entrega recorde e o atendimento humano que sua obra merece. No Andaraí, transformamos sua reforma em realização.
+              Materiais de alta qualidade, entrega recorde e o atendimento humano que sua obra merece. Na Ednaldo Materiais de Construção, transformamos sua reforma em realização.
             </p>
 
             <div className="hero-cta flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -639,33 +639,33 @@ export default function App() {
               {[
                 {
                   name: "Ateliê do Conhecimento",
-                  text: "Excelentes profissionais, gentis e prestativos. Foram humanos e me emprestaram uma ferramenta para usar em casa na boa-fé, pois não conseguia usar o material que havia comprado. Ganhou nossa confiança! Recomendo! ❤️1",
-                  tag: "Recomendo ❤️"
+                  text: "Excelentes profissionais, gentis e prestativos. Foram humanos e me emprestaram uma ferramenta para usar em casa na boa-fé, pois não conseguia usar o material que havia comprado. Ganhou nossa confiança! Recomendo!",
+                  tag: "Recomendo"
                 },
                 {
                   name: "Marli Cruz",
-                  text: "Melhor loja do bairro, ótimos preços e excelente atendimento! Recomendo com certeza! ❤️2",
-                  tag: "Preço Justo ❤️"
+                  text: "Melhor loja do bairro, ótimos preços e excelente atendimento! Recomendo com certeza!",
+                  tag: "Preço Justo"
                 },
                 {
                   name: "Maria Cristina da Costa Sampaio",
-                  text: "Passando para comentar que a loja fica perto de onde moro e os preços são bons e principalmente a qualidade no atendimento dos funcionários. Recomendo com certeza. Passem lá para conferir ❤️1",
-                  tag: "Qualidade ❤️"
+                  text: "Passando para comentar que a loja fica perto de onde moro e os preços são bons e principalmente a qualidade no atendimento dos funcionários. Recomendo com certeza. Passem lá para conferir",
+                  tag: "Qualidade"
                 },
                 {
                   name: "Ana Lucia Brito",
-                  text: "Muito bom atendimento o rapaz entendi te tudo até pra ajudar e tirar as dúvidas sobre material excelente atendimento ❤️1",
-                  tag: "Expertise ❤️"
+                  text: "Muito bom atendimento o rapaz entendi te tudo até pra ajudar e tirar as dúvidas sobre material excelente atendimento",
+                  tag: "Expertise"
                 },
                 {
                   name: "Eduarda",
-                  text: "Atendimento excelente,loja bastante organizada e com muita variedade,estão de parabéns 👏🏼 ❤️1",
-                  tag: "Organização ❤️"
+                  text: "Atendimento excelente,loja bastante organizada e com muita variedade,estão de parabéns 👏🏼",
+                  tag: "Organização"
                 },
                 {
                   name: "Naim Moussa",
-                  text: "Além do bom atendimento, a entrega é muito rápida! ❤️1",
-                  tag: "Entrega Rápida ❤️"
+                  text: "Além do bom atendimento, a entrega é muito rápida!",
+                  tag: "Entrega Rápida"
                 }
               ].map((test, i) => (
                 <div key={i} className="glass p-8 rounded-3xl flex flex-col justify-between scroll-reveal">
@@ -746,7 +746,7 @@ export default function App() {
             <div className="w-6 h-6 bg-accent rounded flex items-center justify-center">
               <HardHat className="text-white w-4 h-4" />
             </div>
-            <span className="font-display font-bold tracking-tighter">ANDARAÍ MATERIAIS</span>
+            <span className="font-display font-bold tracking-tighter">EDNALDO MATERIAIS DE CONSTRUÇÃO</span>
           </div>
           
           <div className="flex flex-col items-center gap-2">
@@ -760,7 +760,7 @@ export default function App() {
               Em caso de urgência entre em contato com: 221969645513
             </a>
             <p className="text-white/30 text-sm">
-              © 2026 Andaraí Materiais de Construção. Todos os direitos reservados.
+              © 2026 Ednaldo Materiais de Construção. Todos os direitos reservados.
             </p>
           </div>
           
