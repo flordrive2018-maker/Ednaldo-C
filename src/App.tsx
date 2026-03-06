@@ -367,13 +367,13 @@ function QuoteChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-[#1a1a1a] w-full max-w-md rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-[#1a1a1a] w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl overflow-hidden border-t sm:border border-white/10 shadow-2xl max-h-[95vh] overflow-y-auto"
       >
-        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-accent/10">
+        <div className="p-4 sm:p-6 border-b border-white/5 flex justify-between items-center bg-accent/10 sticky top-0 z-10 backdrop-blur-md">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
               <Phone className="text-white w-5 h-5" />
@@ -530,20 +530,20 @@ function AIChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm">
       <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-[#1a1a1a] w-full max-w-2xl h-[80vh] rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col"
+        initial={{ opacity: 0, y: 100 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-[#1a1a1a] w-full sm:max-w-2xl h-full sm:h-[80vh] rounded-t-3xl sm:rounded-3xl overflow-hidden border-t sm:border border-white/10 shadow-2xl flex flex-col"
       >
-        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-accent/10">
+        <div className="p-4 sm:p-6 border-b border-white/5 flex justify-between items-center bg-accent/10 sticky top-0 z-10 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
-              <HardHat className="text-white w-5 h-5" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-accent rounded-xl flex items-center justify-center shrink-0">
+              <HardHat className="text-white w-4 h-4 sm:w-5 sm:h-5" />
             </div>
-            <div>
-              <h3 className="font-bold text-lg">Assistente do Ednaldo Materiais de construção, como podemos te ajudar?</h3>
-              <p className="text-xs text-white/40">Seu guia técnico para obras</p>
+            <div className="min-w-0">
+              <h3 className="font-bold text-sm sm:text-lg leading-tight truncate sm:whitespace-normal">Assistente do Ednaldo Materiais de construção, como podemos te ajudar?</h3>
+              <p className="text-[10px] sm:text-xs text-white/40">Seu guia técnico para obras</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
@@ -600,12 +600,12 @@ function AIChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
           )}
         </div>
 
-        <div className="p-6 border-t border-white/5 bg-black/20">
+        <div className="p-4 sm:p-6 border-t border-white/5 bg-black/20">
           <div className="flex gap-2">
             <input 
               type="text" 
               placeholder="Digite sua dúvida técnica..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors text-white"
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors text-white text-sm sm:text-base"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
@@ -613,9 +613,9 @@ function AIChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
             <button 
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="bg-accent text-white p-3 rounded-xl hover:bg-accent/80 transition-colors disabled:opacity-50"
+              className="bg-accent text-white p-3 rounded-xl hover:bg-accent/80 transition-colors disabled:opacity-50 shrink-0"
             >
-              <ArrowRight className="w-6 h-6" />
+              <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
         </div>
