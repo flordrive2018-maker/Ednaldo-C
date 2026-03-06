@@ -22,6 +22,7 @@ import {
   ChevronRight,
   Loader2,
   AlertCircle,
+  X,
   Calendar as CalendarIcon
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'motion/react';
@@ -261,7 +262,7 @@ function Calendar({ compact = false }: { compact?: boolean }) {
         )}
         {holiday && (
           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white text-black text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
-            {holiday}{isWeekdayHoliday ? " (Urgência: 221969645513)" : ""}
+            {holiday}{isWeekdayHoliday ? " (Urgência: (21) 99818-7716)" : ""}
           </div>
         )}
       </div>
@@ -320,13 +321,13 @@ function Calendar({ compact = false }: { compact?: boolean }) {
       {compact && (
         <div className="mt-auto pt-4 border-t border-white/5 flex flex-col gap-2">
           <a 
-            href="https://wa.me/221969645513" 
+            href="https://wa.me/5521998187716" 
             target="_blank" 
             rel="noopener noreferrer"
             className="text-[10px] text-accent hover:underline flex items-center gap-1 font-bold"
           >
             <Phone size={10} />
-            Em caso de urgência entre em contato com: 221969645513
+            Em caso de urgência entre em contato com: (21) 99818-7716
           </a>
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-red-500"></div>
@@ -338,10 +339,155 @@ function Calendar({ compact = false }: { compact?: boolean }) {
   );
 }
 
+function QuoteChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    message: ''
+  });
+
+  const handleSend = () => {
+    const text = `Olá! Gostaria de solicitar um orçamento.\n\n*Nome:* ${formData.name}\n*Telefone:* ${formData.phone}\n*Interesse:* ${formData.message}`;
+    const encoded = encodeURIComponent(text);
+    window.open(`https://wa.me/5521998187716?text=${encoded}`, '_blank');
+    setStep(4);
+  };
+
+  const handleClose = () => {
+    onClose();
+    setTimeout(() => {
+      setStep(1);
+      setFormData({ name: '', phone: '', message: '' });
+    }, 300);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        className="bg-[#1a1a1a] w-full max-w-md rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
+      >
+        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-accent/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
+              <Phone className="text-white w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg">Solicitar Orçamento</h3>
+              <p className="text-xs text-white/40">Atendimento humanizado</p>
+            </div>
+          </div>
+          <button onClick={handleClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+            <X className="w-6 h-6 text-white/40" />
+          </button>
+        </div>
+
+        <div className="p-6 space-y-6">
+          {step === 1 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+              <p className="text-sm text-white/60">Para começarmos, como podemos te chamar?</p>
+              <input 
+                type="text" 
+                placeholder="Seu nome"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors text-white"
+                value={formData.name}
+                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                autoFocus
+              />
+              <button 
+                disabled={!formData.name}
+                onClick={() => setStep(2)}
+                className="w-full bg-accent text-white py-4 rounded-xl font-bold hover:bg-accent/80 transition-colors disabled:opacity-50"
+              >
+                Próximo
+              </button>
+            </motion.div>
+          )}
+
+          {step === 2 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+              <p className="text-sm text-white/60">Ótimo, {formData.name.split(' ')[0]}! Qual seu WhatsApp?</p>
+              <input 
+                type="tel" 
+                placeholder="(00) 00000-0000"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors text-white"
+                value={formData.phone}
+                onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button onClick={() => setStep(1)} className="flex-1 bg-white/5 text-white py-4 rounded-xl font-bold hover:bg-white/10 transition-colors">Voltar</button>
+                <button 
+                  disabled={!formData.phone}
+                  onClick={() => setStep(3)}
+                  className="flex-[2] bg-accent text-white py-4 rounded-xl font-bold hover:bg-accent/80 transition-colors disabled:opacity-50"
+                >
+                  Próximo
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 3 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+              <p className="text-sm text-white/60">O que você está procurando hoje?</p>
+              <textarea 
+                placeholder="Ex: 50 sacos de cimento, 1000 tijolos..."
+                rows={4}
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors resize-none text-white"
+                value={formData.message}
+                onChange={(e) => setFormData({...formData, message: e.target.value})}
+                autoFocus
+              />
+              <div className="flex gap-2">
+                <button onClick={() => setStep(2)} className="flex-1 bg-white/5 text-white py-4 rounded-xl font-bold hover:bg-white/10 transition-colors">Voltar</button>
+                <button 
+                  disabled={!formData.message}
+                  onClick={handleSend}
+                  className="flex-[2] bg-accent text-white py-4 rounded-xl font-bold hover:bg-accent/80 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  Solicitar Agora
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {step === 4 && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-6 py-4">
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-8 h-8 text-green-500" />
+              </div>
+              <div className="space-y-2">
+                <h4 className="text-xl font-bold">Solicitação Enviada!</h4>
+                <p className="text-sm text-white/60">
+                  Pronto! Nossa equipe entrará em contato com você em até 5 min.
+                </p>
+              </div>
+              <button 
+                onClick={handleClose}
+                className="w-full bg-white/5 text-white py-4 rounded-xl font-bold hover:bg-white/10 transition-colors"
+              >
+                Fechar
+              </button>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function App() {
   const heroRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const bentoRef = useRef<HTMLDivElement>(null);
+
+  const [isQuoteChatOpen, setIsQuoteChatOpen] = useState(false);
 
   useEffect(() => {
     // Hero Entrance Animation
@@ -408,10 +554,6 @@ export default function App() {
             <a href="#depoimentos" className="hover:text-white transition-colors">Depoimentos</a>
             <a href="#contato" className="hover:text-white transition-colors">Contato</a>
           </div>
-
-          <button className="bg-white text-black px-6 py-2 rounded-full text-sm font-bold hover:bg-accent hover:text-white transition-all duration-300">
-            Falar com Especialista
-          </button>
         </nav>
       </header>
 
@@ -448,16 +590,6 @@ export default function App() {
             <p className="hero-sub text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
               Materiais de alta qualidade, entrega recorde e o atendimento humano que sua obra merece. Na Ednaldo Materiais de Construção, transformamos sua reforma em realização.
             </p>
-
-            <div className="hero-cta flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button className="group bg-accent text-white px-10 py-5 rounded-2xl font-bold text-lg flex items-center gap-3 hover:shadow-[0_0_30px_rgba(242,125,38,0.4)] transition-all duration-300">
-                Simular Entrega Agora
-                <Truck className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-              <button className="glass px-10 py-5 rounded-2xl font-bold text-lg hover:bg-white/10 transition-all">
-                Ver Catálogo
-              </button>
-            </div>
           </div>
 
           {/* Scroll Indicator */}
@@ -480,6 +612,9 @@ export default function App() {
                 <span className="text-4xl font-display font-black text-white/10 hover:text-accent/40 transition-colors cursor-default">DECA</span>
                 <span className="text-4xl font-display font-black text-white/10 hover:text-accent/40 transition-colors cursor-default">CORAL</span>
                 <span className="text-4xl font-display font-black text-white/10 hover:text-accent/40 transition-colors cursor-default">VEDACIT</span>
+                <span className="text-4xl font-display font-black text-white/10 hover:text-accent/40 transition-colors cursor-default">AQUATERM</span>
+                <span className="text-4xl font-display font-black text-white/10 hover:text-accent/40 transition-colors cursor-default">AQUATERM</span>
+                <span className="text-4xl font-display font-black text-white/10 hover:text-accent/40 transition-colors cursor-default">AQUATERM</span>
               </div>
             ))}
           </div>
@@ -550,14 +685,23 @@ export default function App() {
             </div>
 
             {/* Quality Card */}
-            <div className="bento-item scroll-reveal group overflow-hidden bg-emerald-500/5 border border-emerald-500/10">
+            <div className="bento-item scroll-reveal group overflow-hidden bg-emerald-500/5 border border-emerald-500/10 relative">
+              <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity duration-700">
+                <img 
+                  src="https://lh3.googleusercontent.com/d/1OcZzdM2q6go5YUPMHmVTaBrwtcN1atbs" 
+                  alt="Quality background" 
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-dark-bg via-dark-bg/40 to-transparent"></div>
+              </div>
               <div className="relative z-10">
                 <div className="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-6">
                   <ShieldCheck className="text-emerald-400" />
                 </div>
                 <span className="text-accent font-bold text-[10px] uppercase tracking-widest mb-2 block">Referência:</span>
                 <h3 className="text-xl font-bold mb-3">Qualidade Certificada</h3>
-                <p className="text-sm text-white/50">Trabalhamos apenas com as melhores marcas, sendo a escolha número 1 das grandes obras do Andaraí.</p>
+                <p className="text-sm text-white/50">Trabalhamos apenas com as melhores marcas, sendo a escolha número 1 das grandes obras da região.</p>
               </div>
             </div>
           </div>
@@ -570,7 +714,7 @@ export default function App() {
               <span className="text-accent font-bold tracking-widest uppercase text-sm mb-4 block">Quem Somos</span>
               <h2 className="text-5xl font-bold mb-8 leading-tight">SOLUÇÕES COMPLETAS PARA SUA <span className="italic">OBRA</span>.</h2>
               <p className="text-white/60 text-lg mb-12 leading-relaxed">
-                Somos uma empresa do ramo de materiais de construção que entende a dor do cliente. Trabalhamos do básico ao acabamento, oferecendo material de qualidade e preço justo, seguido de um atendimento que já virou referência no Andaraí.
+                Somos uma empresa do ramo de materiais de construção que entende a dor do cliente. Trabalhamos do básico ao acabamento, oferecendo material de qualidade e preço justo, seguido de um atendimento que já virou referência na região.
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
@@ -751,13 +895,13 @@ export default function App() {
           
           <div className="flex flex-col items-center gap-2">
             <a 
-              href="https://wa.me/221969645513" 
+              href="https://wa.me/5521998187716" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-accent hover:underline flex items-center gap-2 font-bold text-sm"
             >
               <Phone size={14} />
-              Em caso de urgência entre em contato com: 221969645513
+              Em caso de urgência entre em contato com: (21) 99818-7716
             </a>
             <p className="text-white/30 text-sm">
               © 2026 Ednaldo Materiais de Construção. Todos os direitos reservados.
@@ -771,13 +915,29 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Floating Chat Button */}
-      <button className="fixed bottom-8 right-8 w-16 h-16 bg-accent rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform z-50 group">
-        <MessageSquare className="text-white w-8 h-8" />
-        <span className="absolute right-20 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-          Dúvida técnica? Fale com a IA
-        </span>
-      </button>
+      {/* Floating Buttons */}
+      <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+        {/* WhatsApp Floating Button */}
+        <button 
+          onClick={() => setIsQuoteChatOpen(true)}
+          className="w-16 h-16 bg-[#25D366] rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform group relative"
+        >
+          <Phone className="text-white w-8 h-8" />
+          <span className="absolute right-20 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+            Solicitar Orçamento
+          </span>
+        </button>
+
+        {/* Floating Chat Button (AI) */}
+        <button className="w-16 h-16 bg-accent rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform group relative">
+          <MessageSquare className="text-white w-8 h-8" />
+          <span className="absolute right-20 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+            Dúvida técnica? Fale com a IA
+          </span>
+        </button>
+      </div>
+
+      <QuoteChat isOpen={isQuoteChatOpen} onClose={() => setIsQuoteChatOpen(false)} />
     </div>
   );
 }
