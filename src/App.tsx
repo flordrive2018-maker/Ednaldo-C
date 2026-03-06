@@ -725,7 +725,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="max-w-4xl mx-auto scroll-reveal">
+            <div className="max-w-2xl mx-auto scroll-reveal">
               <div className="aspect-video rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative group">
                 <img 
                   src="https://lh3.googleusercontent.com/d/1F_4lXGVQ4EpPznIHxRQBij37Z9HpVhDx" 
