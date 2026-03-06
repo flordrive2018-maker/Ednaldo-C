@@ -30,8 +30,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { GoogleGenAI } from "@google/genai";
-import ReactMarkdown from 'react-markdown';
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -484,139 +482,12 @@ function QuoteChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
   );
 }
 
-function AIChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const [messages, setMessages] = useState<{ role: 'user' | 'model'; text: string }[]>([]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
-
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
-    setLoading(true);
-
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: [
-          ...messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
-          { role: 'user', parts: [{ text: userMessage }] }
-        ],
-        config: {
-          systemInstruction: "Você é o Mentor Ednaldo, um especialista veterano em construção civil com mais de 30 anos de experiência. Seu objetivo é ajudar clientes da 'Ednaldo Materiais de Construção' com dúvidas técnicas, dicas de obra, escolha de materiais e solução de problemas. Seja prático, encorajador e use uma linguagem acessível, mas tecnicamente precisa. Se alguém perguntar sobre preços específicos, sugira que fale com um vendedor pelo botão de orçamento. Foque em ser um mentor que guia o cliente para o sucesso da sua obra.",
-        }
-      });
-
-      const aiText = response.text || "Desculpe, tive um problema ao processar sua dúvida. Pode repetir?";
-      setMessages(prev => [...prev, { role: 'model', text: aiText }]);
-    } catch (error) {
-      console.error(error);
-      setMessages(prev => [...prev, { role: 'model', text: "Opa, tive um pequeno problema técnico aqui. Vamos tentar de novo?" }]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-[#1a1a1a] w-full max-w-2xl h-[80vh] rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col"
-      >
-        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-accent/10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
-              <HardHat className="text-white w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-bold text-lg">Mentor Ednaldo (IA)</h3>
-              <p className="text-xs text-white/40">Seu guia técnico para obras</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-            <X className="w-6 h-6 text-white/40" />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-6 space-y-4" ref={scrollRef}>
-          {messages.length === 0 && (
-            <div className="text-center py-12 space-y-4">
-              <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mx-auto">
-                <Hammer className="w-8 h-8 text-accent" />
-              </div>
-              <div className="space-y-2">
-                <h4 className="font-bold text-xl">Como posso ajudar na sua obra hoje?</h4>
-                <p className="text-sm text-white/40 max-w-xs mx-auto">
-                  Tire dúvidas sobre cimento, encanamento, pintura ou qualquer etapa da sua construção.
-                </p>
-              </div>
-            </div>
-          )}
-          {messages.map((m, i) => (
-            <div key={i} className={cn("flex", m.role === 'user' ? "justify-end" : "justify-start")}>
-              <div className={cn(
-                "max-w-[80%] p-4 rounded-2xl text-sm",
-                m.role === 'user' ? "bg-accent text-white rounded-tr-none" : "bg-white/5 text-white/90 rounded-tl-none border border-white/10"
-              )}>
-                <div className="prose prose-invert prose-sm max-w-none">
-                  <ReactMarkdown>{m.text}</ReactMarkdown>
-                </div>
-              </div>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex justify-start">
-              <div className="bg-white/5 p-4 rounded-2xl rounded-tl-none border border-white/10">
-                <Loader2 className="w-5 h-5 animate-spin text-accent" />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="p-6 border-t border-white/5 bg-black/20">
-          <div className="flex gap-2">
-            <input 
-              type="text" 
-              placeholder="Digite sua dúvida técnica..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors text-white"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-            />
-            <button 
-              onClick={handleSend}
-              disabled={loading || !input.trim()}
-              className="bg-accent text-white p-3 rounded-xl hover:bg-accent/80 transition-colors disabled:opacity-50"
-            >
-              <ArrowRight className="w-6 h-6" />
-            </button>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
 export default function App() {
   const heroRef = useRef<HTMLDivElement>(null);
   const marqueeRef = useRef<HTMLDivElement>(null);
   const bentoRef = useRef<HTMLDivElement>(null);
 
   const [isQuoteChatOpen, setIsQuoteChatOpen] = useState(false);
-  const [isAIChatOpen, setIsAIChatOpen] = useState(false);
 
   useEffect(() => {
     // Hero Entrance Animation
@@ -802,15 +673,6 @@ export default function App() {
             {/* Calendar Card - Compact next to simulator */}
             <div className="md:row-span-2 scroll-reveal">
               <Calendar compact />
-            </div>
-
-            {/* AI Chat Card */}
-            <div className="bento-item scroll-reveal">
-              <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
-                <MessageSquare className="text-blue-400" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">FAQ Inteligente 24h</h3>
-              <p className="text-sm text-white/50">Nosso chat é treinado com as 200 dúvidas mais comuns dos nossos clientes. Respostas técnicas instantâneas.</p>
             </div>
 
             {/* Quality Card */}
@@ -1056,21 +918,9 @@ export default function App() {
             Solicitar Orçamento
           </span>
         </button>
-
-        {/* Floating Chat Button (AI) */}
-        <button 
-          onClick={() => setIsAIChatOpen(true)}
-          className="w-16 h-16 bg-accent rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform group relative"
-        >
-          <MessageSquare className="text-white w-8 h-8" />
-          <span className="absolute right-20 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
-            Dúvida técnica? Fale com a IA
-          </span>
-        </button>
       </div>
 
       <QuoteChat isOpen={isQuoteChatOpen} onClose={() => setIsQuoteChatOpen(false)} />
-      <AIChat isOpen={isAIChatOpen} onClose={() => setIsAIChatOpen(false)} />
     </div>
   );
 }
