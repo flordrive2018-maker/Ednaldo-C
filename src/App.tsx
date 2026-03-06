@@ -675,16 +675,7 @@ export default function App() {
               <Calendar compact />
             </div>
 
-            {/* AI Chat Card */}
-            <div className="bento-item scroll-reveal">
-              <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center mb-6">
-                <MessageSquare className="text-blue-400" />
-              </div>
-              <h3 className="text-xl font-bold mb-3">FAQ Inteligente 24h</h3>
-              <p className="text-sm text-white/50">Nosso chat é treinado com as 200 dúvidas mais comuns dos nossos clientes. Respostas técnicas instantâneas.</p>
-            </div>
-
-            {/* Quality Card */}
+            {/* Quality Card (Moved to FAQ position) */}
             <div className="bento-item scroll-reveal group overflow-hidden bg-emerald-500/5 border border-emerald-500/10 relative">
               <div className="absolute inset-0 z-0 opacity-20 group-hover:opacity-40 transition-opacity duration-700">
                 <img 
