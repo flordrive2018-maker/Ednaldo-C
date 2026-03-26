@@ -250,16 +250,28 @@ function Calendar({ compact = false }: { compact?: boolean }) {
     const isClosed = isSunday || !!holiday;
     const isWeekdayHoliday = !!holiday && dayOfWeek >= 1 && dayOfWeek <= 5;
 
+    const today = new Date();
+    const isToday = today.getDate() === d && 
+                    today.getMonth() === month && 
+                    today.getFullYear() === year;
+
     days.push(
       <div 
         key={d} 
         className={cn(
           "flex flex-col items-center justify-center rounded-lg border border-white/5 transition-all relative group",
           compact ? "h-12 text-lg" : "h-12 md:h-16 text-sm",
+          isToday ? "bg-accent border-accent shadow-[0_0_20px_rgba(242,125,38,0.3)] z-10 scale-105" : 
           isClosed ? "bg-red-500/10 border-red-500/20" : "bg-white/5 hover:bg-white/10"
         )}
       >
-        <span className={cn("font-bold", isClosed ? "text-red-400" : "text-white", compact && "text-xl")}>{d}</span>
+        <span className={cn(
+          "font-bold", 
+          isToday ? "text-white" : isClosed ? "text-red-400" : "text-white", 
+          compact && "text-xl"
+        )}>
+          {d}
+        </span>
         {holiday && (
           <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
         )}
@@ -306,6 +318,10 @@ function Calendar({ compact = false }: { compact?: boolean }) {
 
       {!compact && (
         <div className="flex flex-wrap gap-6 mt-8 pt-8 border-t border-white/5">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-accent shadow-[0_0_10px_rgba(242,125,38,0.5)]"></div>
+            <span className="text-xs text-white/50">Hoje</span>
+          </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-full bg-white/10 border border-white/20"></div>
             <span className="text-xs text-white/50">Aberto (08:00 - 18:30)</span>
