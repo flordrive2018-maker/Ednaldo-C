@@ -25,10 +25,7 @@ import {
   X,
   Camera,
   Image as ImageIcon,
-  Calendar as CalendarIcon,
-  Send,
-  User,
-  Bot
+  Calendar as CalendarIcon
 } from 'lucide-react';
 import { motion } from 'motion/react';
 import gsap from 'gsap';
@@ -673,136 +670,9 @@ function QuoteChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
   );
 }
 
-function ConstructionConsultantModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const [messages, setMessages] = useState<{ role: 'user' | 'bot'; text: string }[]>([
-    { role: 'bot', text: 'Olá! Sou o Consultor de Obras do Ednaldo. Como posso te ajudar com sua obra hoje? Posso tirar dúvidas técnicas, dar dicas de materiais ou ajudar no planejamento.' }
-  ]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages]);
-
-  const handleSend = async () => {
-    if (!input.trim() || loading) return;
-
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
-    setLoading(true);
-
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: [
-          { role: 'user', parts: [{ text: userMessage }] }
-        ],
-        config: {
-          systemInstruction: "Você é o 'Consultor de Obras do Ednaldo', um assistente virtual empático e especialista em construção civil para a loja 'Ednaldo Materiais de Construção'. Seu objetivo é ajudar clientes com dúvidas sobre obras, reformas, escolha de materiais e técnicas de construção. Responda de forma clara, prestativa e humana. Sempre que possível, mencione que a Ednaldo Materiais de Construção tem os melhores produtos para o que o cliente precisa. Se a dúvida for muito específica ou urgente, sugira que ele fale com um de nossos vendedores humanos pelo WhatsApp. Mantenha um tom encorajador e profissional."
-        }
-      });
-
-      const botResponse = response.text || 'Desculpe, tive um problema ao processar sua dúvida. Pode repetir?';
-      setMessages(prev => [...prev, { role: 'bot', text: botResponse }]);
-    } catch (error) {
-      console.error("Consultant Error:", error);
-      setMessages(prev => [...prev, { role: 'bot', text: 'Ops! Tive um probleminha técnico. Pode tentar novamente em alguns instantes?' }]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-[#1a1a1a] w-full max-w-lg h-[600px] flex flex-col rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
-      >
-        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-accent/10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
-              <HardHat className="text-white w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-bold text-lg">Consultor de Obras</h3>
-              <p className="text-xs text-white/40">Especialista Ednaldo 24h</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-            <X className="w-6 h-6 text-white/40" />
-          </button>
-        </div>
-
-        <div 
-          ref={scrollRef}
-          className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-white/10"
-        >
-          {messages.map((msg, i) => (
-            <div key={i} className={cn("flex gap-3", msg.role === 'user' ? "flex-row-reverse" : "")}>
-              <div className={cn(
-                "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
-                msg.role === 'user' ? "bg-white/10" : "bg-accent/20"
-              )}>
-                {msg.role === 'user' ? <User size={16} /> : <Bot size={16} className="text-accent" />}
-              </div>
-              <div className={cn(
-                "max-w-[80%] p-4 rounded-2xl text-sm leading-relaxed",
-                msg.role === 'user' ? "bg-accent text-white rounded-tr-none" : "bg-white/5 text-white/90 rounded-tl-none"
-              )}>
-                {msg.text}
-              </div>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center shrink-0">
-                <Bot size={16} className="text-accent animate-pulse" />
-              </div>
-              <div className="bg-white/5 p-4 rounded-2xl rounded-tl-none">
-                <Loader2 className="w-4 h-4 animate-spin text-accent" />
-              </div>
-            </div>
-          )}
-        </div>
-
-        <div className="p-6 border-t border-white/5 bg-white/[0.02]">
-          <form 
-            onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-            className="flex gap-2"
-          >
-            <input 
-              type="text" 
-              placeholder="Tire sua dúvida sobre obra..."
-              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors text-white text-sm"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <button 
-              type="submit"
-              disabled={!input.trim() || loading}
-              className="bg-accent text-white p-3 rounded-xl hover:bg-accent/80 transition-colors disabled:opacity-50"
-            >
-              <Send size={20} />
-            </button>
-          </form>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
 export default function App() {
   const [isQuoteChatOpen, setIsQuoteChatOpen] = useState(false);
   const [isPhotoQuoteOpen, setIsPhotoQuoteOpen] = useState(false);
-  const [isConsultantOpen, setIsConsultantOpen] = useState(false);
 
   useEffect(() => {
     // Hero Entrance Animation
@@ -1229,17 +1099,6 @@ export default function App() {
 
       {/* Floating Buttons */}
       <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
-        {/* Construction Consultant Button */}
-        <button 
-          onClick={() => setIsConsultantOpen(true)}
-          className="w-16 h-16 bg-white text-accent rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform group relative border-2 border-accent"
-        >
-          <Bot className="w-8 h-8" />
-          <span className="absolute right-20 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
-            Consultor de Obras (IA)
-          </span>
-        </button>
-
         {/* Photo Quote Button */}
         <button 
           onClick={() => setIsPhotoQuoteOpen(true)}
@@ -1265,7 +1124,6 @@ export default function App() {
 
       <QuoteChat isOpen={isQuoteChatOpen} onClose={() => setIsQuoteChatOpen(false)} />
       <PhotoQuoteModal isOpen={isPhotoQuoteOpen} onClose={() => setIsPhotoQuoteOpen(false)} />
-      <ConstructionConsultantModal isOpen={isConsultantOpen} onClose={() => setIsConsultantOpen(false)} />
     </div>
   );
 }
