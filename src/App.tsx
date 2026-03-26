@@ -885,6 +885,12 @@ export default function App() {
           </div>
           
           <div className="flex flex-col items-center gap-2">
+            <img 
+              src="https://lh3.googleusercontent.com/d/1vJ0xdVz8ZkWWreGUw5F-jF66g59qTZkd" 
+              alt="Contato Urgência" 
+              className="h-16 w-auto mb-2"
+              referrerPolicy="no-referrer"
+            />
             <a 
               href="https://wa.me/5521998187716" 
               target="_blank" 
