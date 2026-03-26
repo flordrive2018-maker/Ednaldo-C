@@ -673,6 +673,7 @@ function QuoteChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
 export default function App() {
   const [isQuoteChatOpen, setIsQuoteChatOpen] = useState(false);
   const [isPhotoQuoteOpen, setIsPhotoQuoteOpen] = useState(false);
+  const [isConsultorOpen, setIsConsultorOpen] = useState(false);
 
   useEffect(() => {
     // Hero Entrance Animation
@@ -1099,6 +1100,17 @@ export default function App() {
 
       {/* Floating Buttons */}
       <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+        {/* Consultor de Obras Button */}
+        <button 
+          onClick={() => setIsConsultorOpen(true)}
+          className="w-16 h-16 bg-white text-accent rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform group relative border-2 border-accent"
+        >
+          <MessageSquare className="w-8 h-8" />
+          <span className="absolute right-20 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
+            Consultor de Obras do Ednaldo
+          </span>
+        </button>
+
         {/* Photo Quote Button */}
         <button 
           onClick={() => setIsPhotoQuoteOpen(true)}
@@ -1124,6 +1136,135 @@ export default function App() {
 
       <QuoteChat isOpen={isQuoteChatOpen} onClose={() => setIsQuoteChatOpen(false)} />
       <PhotoQuoteModal isOpen={isPhotoQuoteOpen} onClose={() => setIsPhotoQuoteOpen(false)} />
+      <ConsultorChat isOpen={isConsultorOpen} onClose={() => setIsConsultorOpen(false)} />
+    </div>
+  );
+}
+
+function ConsultorChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const [messages, setMessages] = useState<{ role: 'user' | 'model'; text: string }[]>([
+    { role: 'model', text: 'Olá! Sou o Consultor de Obras do Ednaldo. Como posso te ajudar com sua obra ou reforma hoje?' }
+  ]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim() || loading) return;
+
+    const userMessage = input.trim();
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
+    setLoading(true);
+
+    try {
+      // In this environment, we call Gemini directly from the frontend
+      // The API key is handled by the platform
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const model = ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: [
+          { role: 'user', parts: [{ text: "Você é o Consultor de Obras do Ednaldo. Especialista em construção civil, reformas e manutenção. Responda sempre de forma clara, prática e empática, como um amigo experiente explicando para leigos. Dê exemplos simples e práticos." }] },
+          ...messages.map(m => ({ role: m.role, parts: [{ text: m.text }] })),
+          { role: 'user', parts: [{ text: userMessage }] }
+        ]
+      });
+
+      const response = await model;
+      const reply = response.text || "Desculpe, tive um problema para processar sua dúvida. Pode repetir?";
+      
+      setMessages(prev => [...prev, { role: 'model', text: reply }]);
+    } catch (error) {
+      console.error("Chat Error:", error);
+      setMessages(prev => [...prev, { role: 'model', text: "Ops! Tive um problema técnico. Pode tentar novamente em alguns segundos?" }]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[110] flex items-end md:items-center justify-center md:justify-end p-4 md:p-8 bg-black/40 backdrop-blur-sm">
+      <motion.div 
+        initial={{ opacity: 0, y: 100, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="bg-[#1a1a1a] w-full max-w-lg h-[80vh] md:h-[600px] rounded-3xl overflow-hidden border border-white/10 shadow-2xl flex flex-col"
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-accent/10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-accent/20">
+              <HardHat className="text-accent w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-bold text-lg">Consultor do Ednaldo</h3>
+              <p className="text-xs text-white/40">Especialista em Obras 24h</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
+            <X className="w-6 h-6 text-white/40" />
+          </button>
+        </div>
+
+        {/* Messages Area */}
+        <div 
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-white/10"
+        >
+          {messages.map((msg, i) => (
+            <div key={i} className={cn(
+              "flex flex-col max-w-[85%]",
+              msg.role === 'user' ? "ml-auto items-end" : "items-start"
+            )}>
+              <div className={cn(
+                "px-4 py-3 rounded-2xl text-sm leading-relaxed",
+                msg.role === 'user' 
+                  ? "bg-accent text-white rounded-tr-none" 
+                  : "bg-white/5 text-white/90 border border-white/10 rounded-tl-none"
+              )}>
+                {msg.text}
+              </div>
+            </div>
+          ))}
+          {loading && (
+            <div className="flex items-center gap-2 text-white/40 text-xs italic">
+              <Loader2 className="animate-spin w-3 h-3" />
+              Ednaldo está pensando...
+            </div>
+          )}
+        </div>
+
+        {/* Input Area */}
+        <div className="p-6 border-t border-white/5 bg-white/[0.02]">
+          <div className="flex gap-2">
+            <input 
+              type="text" 
+              placeholder="Tire sua dúvida sobre obra..."
+              className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors text-white text-sm"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            />
+            <button 
+              onClick={handleSend}
+              disabled={loading || !input.trim()}
+              className="bg-accent text-white p-3 rounded-xl hover:bg-accent/80 transition-colors disabled:opacity-50"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </div>
+          <p className="text-[10px] text-white/20 mt-3 text-center">
+            Respostas geradas por IA. Para orçamentos, use o botão de WhatsApp.
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
