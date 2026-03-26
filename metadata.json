@@ -2,6 +2,7 @@
   "name": "Ednaldo Materiais de Construção",
   "description": "Landing page de luxo para Ednaldo Materiais de Construção no Rio de Janeiro, com simulador de entrega e atendimento especializado.",
   "requestFramePermissions": [
-    "geolocation"
+    "geolocation",
+    "camera"
   ]
 }
