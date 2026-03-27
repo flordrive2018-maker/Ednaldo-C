@@ -142,37 +142,37 @@ function ShippingSimulator() {
 
   return (
     <div className="relative z-10 h-full flex flex-col">
-      <div className="mb-6">
-        <div className="w-12 h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-6">
+      <div className="mb-4 md:mb-6">
+        <div className="w-10 h-10 md:w-12 md:h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-4 md:mb-6">
           <Truck className="text-accent" />
         </div>
-        <h3 className="text-3xl font-bold mb-4">Simulador de Entrega em Tempo Real</h3>
-        <p className="text-white/60 max-w-md">
+        <h3 className="text-2xl md:text-3xl font-bold mb-2 md:mb-4">Simulador de Entrega</h3>
+        <p className="text-white/60 text-sm md:text-base max-w-md">
           Entregas gratuitas em até 4km. A partir disso, taxa fixa de apenas R$20.
         </p>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center items-center">
+      <div className="flex-1 flex flex-col justify-center items-center py-4">
         {result && (
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className={cn(
-              "p-6 rounded-2xl border flex flex-col items-center text-center gap-4 w-full max-w-sm",
+              "p-4 md:p-6 rounded-2xl border flex flex-col items-center text-center gap-3 md:gap-4 w-full max-w-sm",
               result.cost === 0 ? "bg-emerald-500/10 border-emerald-500/20" : "bg-blue-500/10 border-blue-500/20"
             )}
           >
             <div className={cn(
-              "w-12 h-12 rounded-full flex items-center justify-center",
+              "w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center",
               result.cost === 0 ? "bg-emerald-500/20 text-emerald-400" : "bg-blue-500/20 text-blue-400"
             )}>
-              {result.cost === 0 ? <CheckCircle2 size={24} /> : <MapPin size={24} />}
+              {result.cost === 0 ? <CheckCircle2 size={20} /> : <MapPin size={20} />}
             </div>
             <div>
-              <p className="text-2xl font-bold text-white mb-1">
+              <p className="text-xl md:text-2xl font-bold text-white mb-1">
                 {result.cost === 0 ? "Frete Grátis!" : `Frete: R$ ${result.cost.toFixed(2)}`}
               </p>
-              <p className="text-xs text-white/50 uppercase tracking-widest font-medium">
+              <p className="text-[10px] md:text-xs text-white/50 uppercase tracking-widest font-medium">
                 Distância: {result.distance.toFixed(1)}km • {result.address}
               </p>
             </div>
@@ -183,30 +183,30 @@ function ShippingSimulator() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20 flex flex-col items-center text-center gap-4 w-full max-w-sm"
+            className="p-4 md:p-6 rounded-2xl bg-red-500/10 border border-red-500/20 flex flex-col items-center text-center gap-3 md:gap-4 w-full max-w-sm"
           >
-            <div className="w-12 h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center">
-              <AlertCircle size={24} />
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center">
+              <AlertCircle size={20} />
             </div>
             <p className="text-sm text-red-400 font-medium">{error}</p>
           </motion.div>
         )}
       </div>
 
-      <div className="mt-6 flex items-center gap-4">
+      <div className="mt-4 md:mt-6 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 md:gap-4">
         <input 
           type="text" 
           value={cep}
           onChange={(e) => setCep(e.target.value)}
           placeholder="Seu CEP (00000-000)" 
-          className="bg-white/5 border border-white/10 rounded-xl px-6 py-4 flex-1 focus:outline-none focus:border-accent/50 transition-colors text-white"
+          className="bg-white/5 border border-white/10 rounded-xl px-4 md:px-6 py-3 md:py-4 flex-1 focus:outline-none focus:border-accent/50 transition-colors text-white text-sm md:text-base"
         />
         <button 
           onClick={handleSimulate}
           disabled={loading}
-          className="bg-white text-black px-8 py-4 rounded-xl font-bold hover:bg-accent hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+          className="bg-white text-black px-6 md:px-8 py-3 md:py-4 rounded-xl font-bold hover:bg-accent hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
         >
-          {loading ? <Loader2 className="animate-spin" size={20} /> : "Simular"}
+          {loading ? <Loader2 className="animate-spin" size={18} /> : "Simular"}
         </button>
       </div>
     </div>
