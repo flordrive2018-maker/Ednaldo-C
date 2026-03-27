@@ -260,7 +260,7 @@ function Calendar({ compact = false }: { compact?: boolean }) {
         key={d} 
         className={cn(
           "flex flex-col items-center justify-center rounded-lg border border-white/5 transition-all relative group",
-          compact ? "h-12 text-lg" : "h-12 md:h-16 text-sm",
+          compact ? "h-10 md:h-12 text-base md:text-lg" : "h-12 md:h-16 text-sm",
           isToday ? "bg-accent border-accent shadow-[0_0_20px_rgba(242,125,38,0.3)] z-10 scale-105" : 
           isClosed ? "bg-red-500/10 border-red-500/20" : "bg-white/5 hover:bg-white/10"
         )}
@@ -268,7 +268,7 @@ function Calendar({ compact = false }: { compact?: boolean }) {
         <span className={cn(
           "font-bold", 
           isToday ? "text-white" : isClosed ? "text-red-400" : "text-white", 
-          compact && "text-xl"
+          compact && "text-lg md:text-xl"
         )}>
           {d}
         </span>
@@ -286,32 +286,32 @@ function Calendar({ compact = false }: { compact?: boolean }) {
 
   return (
     <div className={cn(
-      "glass rounded-[2.5rem] flex flex-col h-full",
-      compact ? "p-5" : "p-6 md:p-10 max-w-4xl mx-auto"
+      "glass rounded-[2rem] md:rounded-[2.5rem] flex flex-col h-full",
+      compact ? "p-4 md:p-5" : "p-4 md:p-10 max-w-4xl mx-auto"
     )}>
-      <div className={cn("flex items-center justify-between", compact ? "mb-8" : "mb-8")}>
-        <div className="flex items-center gap-4">
-          <div className={cn("bg-accent/20 rounded-2xl flex items-center justify-center", compact ? "w-14 h-14" : "w-12 h-12")}>
-            <CalendarIcon className="text-accent" size={compact ? 28 : 24} />
+      <div className={cn("flex items-center justify-between", compact ? "mb-4 md:mb-8" : "mb-8")}>
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className={cn("bg-accent/20 rounded-xl md:rounded-2xl flex items-center justify-center", compact ? "w-10 h-10 md:w-14 md:h-14" : "w-12 h-12")}>
+            <CalendarIcon className="text-accent" size={compact ? 20 : 24} />
           </div>
           <div>
-            <h3 className={cn("font-black tracking-tighter", compact ? "text-3xl" : "text-2xl")}>{monthNames[month]}</h3>
-            <p className="text-white/40 text-xs font-bold">{year}</p>
+            <h3 className={cn("font-black tracking-tighter", compact ? "text-xl md:text-3xl" : "text-2xl")}>{monthNames[month]}</h3>
+            <p className="text-white/40 text-[10px] md:text-xs font-bold">{year}</p>
           </div>
         </div>
-        <div className="flex gap-2">
-          <button onClick={prevMonth} className="w-12 h-12 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
-            <ChevronLeft size={24} />
+        <div className="flex gap-1 md:gap-2">
+          <button onClick={prevMonth} className="w-8 h-8 md:w-12 md:h-12 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
+            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
           </button>
-          <button onClick={nextMonth} className="w-12 h-12 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
-            <ChevronRight size={24} />
+          <button onClick={nextMonth} className="w-8 h-8 md:w-12 md:h-12 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
+            <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1.5 mb-4">
+      <div className="grid grid-cols-7 gap-1 md:gap-1.5 mb-4">
         {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
-          <div key={`${d}-${i}`} className="text-center text-[13px] uppercase tracking-widest font-black text-white/50 py-3">{d}</div>
+          <div key={`${d}-${i}`} className="text-center text-[10px] md:text-[13px] uppercase tracking-widest font-black text-white/50 py-2 md:py-3">{d}</div>
         ))}
         {days}
       </div>
@@ -812,9 +812,9 @@ export default function App() {
             <p className="text-white/50 max-w-xl mx-auto">Não vendemos apenas tijolos e cimento. Entregamos confiança e tecnologia para facilitar sua vida.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:auto-rows-[300px]">
             {/* Small Card - Simulator (Reduced 50%) */}
-            <div className="bento-item md:row-span-2 group scroll-reveal">
+            <div className="bento-item md:row-span-2 group scroll-reveal min-h-[400px] md:min-h-0">
               {/* Background Image with Overlay */}
               <div className="absolute inset-0 z-0">
                 <img 
@@ -856,7 +856,7 @@ export default function App() {
             </div>
 
             {/* Calendar Card - Compact next to simulator */}
-            <div className="md:row-span-2 scroll-reveal">
+            <div className="md:row-span-2 scroll-reveal min-h-[500px] md:min-h-0">
               <Calendar compact />
             </div>
 
