@@ -142,12 +142,12 @@ function ShippingSimulator() {
 
   return (
     <div className="relative z-10 h-full flex flex-col">
-      <div className="mb-4 md:mb-6">
-        <div className="w-10 h-10 md:w-12 md:h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-4 md:mb-6">
-          <Truck className="text-accent" />
+      <div className="mb-3 md:mb-6">
+        <div className="w-8 h-8 md:w-12 md:h-12 bg-accent/20 rounded-xl flex items-center justify-center mb-3 md:mb-6">
+          <Truck className="text-accent" size={18} />
         </div>
-        <h3 className="text-2xl md:text-3xl font-bold mb-2 md:mb-4">Simulador de Entrega</h3>
-        <p className="text-white/60 text-sm md:text-base max-w-md">
+        <h3 className="text-xl md:text-3xl font-bold mb-1 md:mb-4">Simulador de Entrega</h3>
+        <p className="text-white/60 text-xs md:text-base max-w-md">
           Entregas gratuitas em até 4km. A partir disso, taxa fixa de apenas R$20.
         </p>
       </div>
@@ -260,20 +260,23 @@ function Calendar({ compact = false }: { compact?: boolean }) {
         key={d} 
         className={cn(
           "flex flex-col items-center justify-center rounded-lg border border-white/5 transition-all relative group",
-          compact ? "h-10 md:h-12 text-base md:text-lg" : "h-12 md:h-16 text-sm",
-          isToday ? "bg-accent border-accent shadow-[0_0_20px_rgba(242,125,38,0.3)] z-10 scale-105" : 
+          compact ? "h-10 md:h-12 text-sm md:text-lg" : "h-12 md:h-16 text-sm",
+          isToday ? "bg-accent border-accent shadow-[0_0_20px_rgba(242,125,38,0.5)] z-10 scale-105 ring-2 ring-white/20" : 
           isClosed ? "bg-red-500/10 border-red-500/20" : "bg-white/5 hover:bg-white/10"
         )}
       >
         <span className={cn(
           "font-bold", 
           isToday ? "text-white" : isClosed ? "text-red-400" : "text-white", 
-          compact && "text-lg md:text-xl"
+          compact && "text-base md:text-xl"
         )}>
           {d}
         </span>
+        {isToday && (
+          <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-white text-accent text-[8px] font-black px-1 rounded-sm shadow-lg">HOJE</span>
+        )}
         {holiday && (
-          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-2 h-2 bg-red-500 rounded-full"></div>
+          <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 bg-red-500 rounded-full"></div>
         )}
         {holiday && (
           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-white text-black text-[10px] font-bold rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none shadow-xl">
@@ -287,31 +290,31 @@ function Calendar({ compact = false }: { compact?: boolean }) {
   return (
     <div className={cn(
       "glass rounded-[2rem] md:rounded-[2.5rem] flex flex-col h-full",
-      compact ? "p-4 md:p-5" : "p-4 md:p-10 max-w-4xl mx-auto"
+      compact ? "p-3 md:p-5" : "p-4 md:p-10 max-w-4xl mx-auto"
     )}>
-      <div className={cn("flex items-center justify-between", compact ? "mb-4 md:mb-8" : "mb-8")}>
-        <div className="flex items-center gap-3 md:gap-4">
-          <div className={cn("bg-accent/20 rounded-xl md:rounded-2xl flex items-center justify-center", compact ? "w-10 h-10 md:w-14 md:h-14" : "w-12 h-12")}>
-            <CalendarIcon className="text-accent" size={compact ? 20 : 24} />
+      <div className={cn("flex items-center justify-between", compact ? "mb-3 md:mb-8" : "mb-8")}>
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className={cn("bg-accent/20 rounded-xl md:rounded-2xl flex items-center justify-center", compact ? "w-8 h-8 md:w-14 md:h-14" : "w-12 h-12")}>
+            <CalendarIcon className="text-accent" size={compact ? 16 : 24} />
           </div>
           <div>
-            <h3 className={cn("font-black tracking-tighter", compact ? "text-xl md:text-3xl" : "text-2xl")}>{monthNames[month]}</h3>
-            <p className="text-white/40 text-[10px] md:text-xs font-bold">{year}</p>
+            <h3 className={cn("font-black tracking-tighter", compact ? "text-lg md:text-3xl" : "text-2xl")}>{monthNames[month]}</h3>
+            <p className="text-white/40 text-[8px] md:text-xs font-bold">{year}</p>
           </div>
         </div>
         <div className="flex gap-1 md:gap-2">
-          <button onClick={prevMonth} className="w-8 h-8 md:w-12 md:h-12 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
-            <ChevronLeft className="w-5 h-5 md:w-6 md:h-6" />
+          <button onClick={prevMonth} className="w-7 h-7 md:w-12 md:h-12 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
+            <ChevronLeft className="w-4 h-4 md:w-6 md:h-6" />
           </button>
-          <button onClick={nextMonth} className="w-8 h-8 md:w-12 md:h-12 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
-            <ChevronRight className="w-5 h-5 md:w-6 md:h-6" />
+          <button onClick={nextMonth} className="w-7 h-7 md:w-12 md:h-12 rounded-full glass flex items-center justify-center hover:bg-white/10 transition-all">
+            <ChevronRight className="w-4 h-4 md:w-6 md:h-6" />
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 md:gap-1.5 mb-4">
+      <div className="grid grid-cols-7 gap-1 md:gap-1.5 mb-2 md:mb-4">
         {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
-          <div key={`${d}-${i}`} className="text-center text-[10px] md:text-[13px] uppercase tracking-widest font-black text-white/50 py-2 md:py-3">{d}</div>
+          <div key={`${d}-${i}`} className="text-center text-[9px] md:text-[13px] uppercase tracking-widest font-black text-white/50 py-1 md:py-3">{d}</div>
         ))}
         {days}
       </div>
@@ -363,6 +366,7 @@ function PhotoQuoteModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [extractedText, setExtractedText] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -371,6 +375,7 @@ function PhotoQuoteModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
+        setError(null);
         setStep(2);
       };
       reader.readAsDataURL(file);
@@ -380,25 +385,43 @@ function PhotoQuoteModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
   const performOCR = async () => {
     if (!image) return;
     setLoading(true);
+    setError(null);
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const base64Data = image.split(',')[1];
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("API Key não configurada. Por favor, verifique as configurações do ambiente.");
+      }
+
+      const ai = new GoogleGenAI({ apiKey });
+      
+      // Extract mime type and base64 data more robustly
+      const matches = image.match(/^data:(.+);base64,(.+)$/);
+      if (!matches) {
+        throw new Error("Formato de imagem inválido. Tente tirar outra foto.");
+      }
+      
+      const mimeType = matches[1];
+      const base64Data = matches[2];
+
       const response = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
-        contents: [
-          {
-            parts: [
-              { text: "Leia esta lista de materiais de construção e extraia apenas os itens e quantidades em um formato de lista limpa em português. Se não houver lista ou itens de construção, diga que não encontrou itens claros." },
-              { inlineData: { data: base64Data, mimeType: "image/jpeg" } }
-            ]
-          }
-        ]
+        contents: {
+          parts: [
+            { text: "Leia esta lista de materiais de construção e extraia apenas os itens e quantidades em um formato de lista limpa em português. Se não houver lista ou itens de construção, diga que não encontrou itens claros. Seja direto e organizado." },
+            { inlineData: { data: base64Data, mimeType } }
+          ]
+        }
       });
-      setExtractedText(response.text || '');
+      
+      if (!response.text) {
+        throw new Error("A inteligência artificial não conseguiu ler o texto. Tente uma foto mais nítida e com melhor iluminação.");
+      }
+
+      setExtractedText(response.text);
       setStep(3);
-    } catch (error) {
-      console.error("OCR Error:", error);
-      alert("Erro ao processar imagem. Tente novamente.");
+    } catch (err: any) {
+      console.error("OCR Error:", err);
+      setError(err.message || "Ocorreu um erro ao processar a imagem. Verifique sua conexão e tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -477,10 +500,21 @@ function PhotoQuoteModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
               <div className="aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-black">
                 {image && <img src={image} alt="Preview" className="w-full h-full object-contain" />}
               </div>
+              
+              {error && (
+                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3">
+                  <AlertCircle className="text-red-400 shrink-0" size={20} />
+                  <p className="text-xs text-red-400 font-medium">{error}</p>
+                </div>
+              )}
+
               <p className="text-sm text-white/60 text-center italic">"A foto está nítida? A IA precisa ler os textos."</p>
               <div className="flex gap-2">
                 <button 
-                  onClick={() => setStep(1)} 
+                  onClick={() => {
+                    setStep(1);
+                    setError(null);
+                  }} 
                   className="flex-1 bg-white/5 text-white py-4 rounded-xl font-bold hover:bg-white/10 transition-colors"
                 >
                   Refazer
