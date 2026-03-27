@@ -387,9 +387,11 @@ function PhotoQuoteModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => 
     setLoading(true);
     setError(null);
     try {
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
-        throw new Error("API Key não configurada. Por favor, verifique as configurações do ambiente.");
+      // Tenta obter a chave de várias fontes possíveis no ambiente Vite
+      const apiKey = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
+      
+      if (!apiKey || apiKey === 'undefined' || apiKey === '') {
+        throw new Error("A chave da API Gemini não foi encontrada. Por favor, adicione GEMINI_API_KEY ou VITE_GEMINI_API_KEY às variáveis de ambiente nas configurações.");
       }
 
       const ai = new GoogleGenAI({ apiKey });
