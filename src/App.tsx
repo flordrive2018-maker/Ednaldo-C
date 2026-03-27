@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { 
   Truck, 
   MessageSquare, 
@@ -23,8 +23,6 @@ import {
   Loader2,
   AlertCircle,
   X,
-  Camera,
-  Image as ImageIcon,
   Calendar as CalendarIcon
 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -32,7 +30,6 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { GoogleGenAI } from "@google/genai";
 
 // Utility for tailwind classes
 function cn(...inputs: ClassValue[]) {
@@ -361,208 +358,6 @@ function Calendar({ compact = false }: { compact?: boolean }) {
   );
 }
 
-function PhotoQuoteModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
-  const [step, setStep] = useState(1);
-  const [image, setImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [extractedText, setExtractedText] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-        setError(null);
-        setStep(2);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const performOCR = async () => {
-    if (!image) return;
-    setLoading(true);
-    setError(null);
-    try {
-      // Tenta obter a chave de várias fontes possíveis no ambiente Vite
-      const apiKey = process.env.GEMINI_API_KEY || import.meta.env.VITE_GEMINI_API_KEY;
-      
-      if (!apiKey || apiKey === 'undefined' || apiKey === '') {
-        throw new Error("A chave da API Gemini não foi encontrada. Por favor, adicione GEMINI_API_KEY ou VITE_GEMINI_API_KEY às variáveis de ambiente nas configurações.");
-      }
-
-      const ai = new GoogleGenAI({ apiKey });
-      
-      // Extract mime type and base64 data more robustly
-      const matches = image.match(/^data:(.+);base64,(.+)$/);
-      if (!matches) {
-        throw new Error("Formato de imagem inválido. Tente tirar outra foto.");
-      }
-      
-      const mimeType = matches[1];
-      const base64Data = matches[2];
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: {
-          parts: [
-            { text: "Leia esta lista de materiais de construção e extraia apenas os itens e quantidades em um formato de lista limpa em português. Se não houver lista ou itens de construção, diga que não encontrou itens claros. Seja direto e organizado." },
-            { inlineData: { data: base64Data, mimeType } }
-          ]
-        }
-      });
-      
-      if (!response.text) {
-        throw new Error("A inteligência artificial não conseguiu ler o texto. Tente uma foto mais nítida e com melhor iluminação.");
-      }
-
-      setExtractedText(response.text);
-      setStep(3);
-    } catch (err: any) {
-      console.error("OCR Error:", err);
-      setError(err.message || "Ocorreu um erro ao processar a imagem. Verifique sua conexão e tente novamente.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSend = () => {
-    const text = `Olá! Gostaria de um orçamento para esta lista extraída de uma foto:\n\n${extractedText}`;
-    const encoded = encodeURIComponent(text);
-    window.open(`https://wa.me/5521998187716?text=${encoded}`, '_blank');
-    handleClose();
-  };
-
-  const handleClose = () => {
-    onClose();
-    setTimeout(() => {
-      setStep(1);
-      setImage(null);
-      setExtractedText('');
-    }, 300);
-  };
-
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="bg-[#1a1a1a] w-full max-w-md rounded-3xl overflow-hidden border border-white/10 shadow-2xl"
-      >
-        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-accent/10">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-accent rounded-xl flex items-center justify-center">
-              <Camera className="text-white w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-bold text-lg">Orçamento por Foto</h3>
-              <p className="text-xs text-white/40">IA lê sua lista de papel</p>
-            </div>
-          </div>
-          <button onClick={handleClose} className="p-2 hover:bg-white/5 rounded-full transition-colors">
-            <X className="w-6 h-6 text-white/40" />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-6">
-          {step === 1 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-6 py-4">
-              <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/10">
-                <ImageIcon className="text-white/20 w-10 h-10" />
-              </div>
-              <div className="space-y-2">
-                <p className="font-bold text-lg">Tire uma foto da sua lista</p>
-                <p className="text-sm text-white/40 px-4">Nossa inteligência artificial vai ler os itens e enviar para nossos vendedores.</p>
-              </div>
-              <input 
-                type="file" 
-                accept="image/*" 
-                capture="environment"
-                className="hidden" 
-                ref={fileInputRef}
-                onChange={handleImageUpload}
-              />
-              <button 
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full bg-accent text-white py-4 rounded-xl font-bold hover:bg-accent/80 transition-colors flex items-center justify-center gap-2"
-              >
-                <Camera size={20} />
-                Tirar Foto / Escolher Imagem
-              </button>
-            </motion.div>
-          )}
-
-          {step === 2 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-              <div className="aspect-video w-full rounded-xl overflow-hidden border border-white/10 bg-black">
-                {image && <img src={image} alt="Preview" className="w-full h-full object-contain" />}
-              </div>
-              
-              {error && (
-                <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3">
-                  <AlertCircle className="text-red-400 shrink-0" size={20} />
-                  <p className="text-xs text-red-400 font-medium">{error}</p>
-                </div>
-              )}
-
-              <p className="text-sm text-white/60 text-center italic">"A foto está nítida? A IA precisa ler os textos."</p>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => {
-                    setStep(1);
-                    setError(null);
-                  }} 
-                  className="flex-1 bg-white/5 text-white py-4 rounded-xl font-bold hover:bg-white/10 transition-colors"
-                >
-                  Refazer
-                </button>
-                <button 
-                  onClick={performOCR}
-                  disabled={loading}
-                  className="flex-[2] bg-accent text-white py-4 rounded-xl font-bold hover:bg-accent/80 transition-colors flex items-center justify-center gap-2"
-                >
-                  {loading ? <Loader2 className="animate-spin" size={20} /> : "Ler Lista agora"}
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {step === 3 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-              <p className="text-sm text-white/60">Confira os itens identificados:</p>
-              <textarea 
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-accent transition-colors resize-none text-white text-sm"
-                rows={6}
-                value={extractedText}
-                onChange={(e) => setExtractedText(e.target.value)}
-              />
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => setStep(2)} 
-                  className="flex-1 bg-white/5 text-white py-4 rounded-xl font-bold hover:bg-white/10 transition-colors"
-                >
-                  Voltar
-                </button>
-                <button 
-                  onClick={handleSend}
-                  className="flex-[2] bg-[#25D366] text-white py-4 rounded-xl font-bold hover:bg-[#128C7E] transition-colors flex items-center justify-center gap-2"
-                >
-                  Enviar para WhatsApp
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
 function QuoteChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -708,7 +503,6 @@ function QuoteChat({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
 
 export default function App() {
   const [isQuoteChatOpen, setIsQuoteChatOpen] = useState(false);
-  const [isPhotoQuoteOpen, setIsPhotoQuoteOpen] = useState(false);
 
   useEffect(() => {
     // Hero Entrance Animation
@@ -1135,17 +929,6 @@ export default function App() {
 
       {/* Floating Buttons */}
       <div className="fixed bottom-8 right-8 flex flex-col gap-4 z-50">
-        {/* Photo Quote Button */}
-        <button 
-          onClick={() => setIsPhotoQuoteOpen(true)}
-          className="w-16 h-16 bg-accent rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform group relative"
-        >
-          <Camera className="text-white w-8 h-8" />
-          <span className="absolute right-20 bg-white text-black px-4 py-2 rounded-xl text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-lg">
-            Orçamento por Foto (IA)
-          </span>
-        </button>
-
         {/* WhatsApp Floating Button */}
         <button 
           onClick={() => setIsQuoteChatOpen(true)}
@@ -1159,7 +942,6 @@ export default function App() {
       </div>
 
       <QuoteChat isOpen={isQuoteChatOpen} onClose={() => setIsQuoteChatOpen(false)} />
-      <PhotoQuoteModal isOpen={isPhotoQuoteOpen} onClose={() => setIsPhotoQuoteOpen(false)} />
     </div>
   );
 }
