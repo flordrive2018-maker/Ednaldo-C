@@ -560,7 +560,7 @@ export default function App() {
             <div className="w-8 h-8 bg-accent rounded-lg flex items-center justify-center">
               <HardHat className="text-white w-5 h-5" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tighter">EDNALDO MATERIAIS DE CONSTRUÇÃO</span>
+            <span className="font-display font-bold text-xl tracking-tighter">EDNALDO CONSTRUÇÕES ANDARAÍ</span>
           </div>
           
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-white/70">
@@ -603,7 +603,7 @@ export default function App() {
             </h1>
             
             <p className="hero-sub text-lg md:text-xl text-white/60 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
-              Materiais de alta qualidade, entrega recorde e o atendimento humano que sua obra merece. Na Ednaldo Materiais de Construção, transformamos sua reforma em realização.
+              Ednaldo Construções Andaraí: especialista em construção e reformas com atendimento rápido e preço justo. Materiais de alta qualidade e entrega recorde no Rio de Janeiro.
             </p>
           </div>
 
@@ -896,7 +896,7 @@ export default function App() {
             <div className="w-6 h-6 bg-accent rounded flex items-center justify-center">
               <HardHat className="text-white w-4 h-4" />
             </div>
-            <span className="font-display font-bold tracking-tighter">EDNALDO MATERIAIS DE CONSTRUÇÃO</span>
+            <span className="font-bold tracking-tighter">EDNALDO CONSTRUÇÕES ANDARAÍ</span>
           </div>
           
           <div className="flex flex-col items-center gap-2">
@@ -916,7 +916,7 @@ export default function App() {
               Em caso de urgência entre em contato com: (21) 99818-7716
             </a>
             <p className="text-white/30 text-sm">
-              © 2026 Ednaldo Materiais de Construção. Todos os direitos reservados.
+              © 2026 Ednaldo Construções Andaraí. Todos os direitos reservados.
             </p>
           </div>
           

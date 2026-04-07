@@ -1,6 +1,6 @@
 {
-  "name": "Ednaldo Materiais de Construção",
-  "description": "Landing page de luxo para Ednaldo Materiais de Construção no Rio de Janeiro, com simulador de entrega e atendimento especializado.",
+  "name": "Ednaldo Construções Andaraí",
+  "description": "Ednaldo Construções Andaraí: especialista em construção e reformas com atendimento rápido e preço justo.",
   "requestFramePermissions": [
     "geolocation",
     "camera"
